@@ -125,7 +125,7 @@ namespace SWSniff.Core
         {
             SWPacket p = SWPacket.Parse(data);
 
-            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {p.ID0:X2} {p.ID1:X2} {p.ID2:X2} (len={p.Data.Length})");
+            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {p.ID1:X2} {p.ID2:X2}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))} ({Encoding.ASCII.GetString(p.Data)})");
         }
     }
 }
