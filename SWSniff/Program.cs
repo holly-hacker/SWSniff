@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SWSniff.Core;
 
 namespace SWSniff
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
+            Sniffer s = new Sniffer();
+            s.Start();
+
+            Console.WriteLine("Started, press enter to exit");
+            Console.ReadLine();
         }
     }
 }

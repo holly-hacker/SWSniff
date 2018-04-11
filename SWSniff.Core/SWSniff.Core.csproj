@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2A8D2545-7108-41CC-BAD5-90507EBBBFC4}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>SWSniff</RootNamespace>
-    <AssemblyName>SWSniff</AssemblyName>
+    <ProjectGuid>{6B4C573F-A5FC-4EA8-891E-6529A1D48119}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SWSniff.Core</RootNamespace>
+    <AssemblyName>SWSniff.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -42,17 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Interop\PipeMessageHeader.cs" />
+    <Compile Include="Interop\_Enums.cs" />
+    <Compile Include="Native.cs" />
+    <Compile Include="Packets\SWPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SWSniff.Core\SWSniff.Core.csproj">
-      <Project>{6b4c573f-a5fc-4ea8-891e-6529a1d48119}</Project>
-      <Name>SWSniff.Core</Name>
-    </ProjectReference>
+    <Compile Include="RandomHelper.cs" />
+    <Compile Include="Sniffer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
