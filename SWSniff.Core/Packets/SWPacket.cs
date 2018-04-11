@@ -3,17 +3,19 @@ using System.IO;
 
 namespace SWSniff.Core.Packets
 {
-    //TODO: make abstract abd inherit from this
-    public class SWPacket
+    public abstract class SWPacket
     {
         public byte ID0;
         public byte ID1;
         public byte ID2;
-        public ushort ID => (ushort)(ID2 + ID1 << 2);
+        public ushort ID => (ushort)(ID2 + (ID1 << 8));
         public byte[] Data;
 
         public static SWPacket Parse(byte[] allData)
         {
+#if DEBUG
+            var beforeDecrypt = allData.Clone();
+#endif
             DecryptArray(allData);
             using (var ms = new MemoryStream(allData))
             using (var br = new BinaryReader(ms)) {
@@ -25,12 +27,20 @@ namespace SWSniff.Core.Packets
                 byte[] packetData = br.ReadBytes(len - 7);
                 Debug.Assert(ms.Position == ms.Length, "Not at end of stream after reading packet");
 
-                var p = new SWPacket();
-                p.ID0 = id0;
-                p.ID1 = id1;
-                p.ID2 = id2;
-                p.Data = packetData;
-                return p;
+                SWPacket ret;
+
+                switch ((PacketType)(id2 + (id1 << 8))) {
+                    default:
+                        ret = new GenericSWPacket();
+                        break;
+                }
+
+                ret.ID0 = id0;
+                ret.ID1 = id1;
+                ret.ID2 = id2;
+                ret.Data = packetData;
+                return ret;
+
             }
         }
 
@@ -42,4 +52,6 @@ namespace SWSniff.Core.Packets
                 arr[i + arrOffset] ^= Constants.XorKey[xorOffset*4 + i%3];
         }
     }
+
+    public class GenericSWPacket : SWPacket { }
 }

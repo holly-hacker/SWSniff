@@ -25,6 +25,12 @@ namespace SWSniff.Core
                 new WebClient().DownloadFile(Constants.UrlWspe, Constants.FilenameWspe);
         }
 
+        public void WaitForProcess(int sleepMs = 100)
+        {
+            while (RandomHelper.GetProcessID() == null)
+                Thread.Sleep(sleepMs);
+        }
+
         public void Start()
         {
             //find process
@@ -92,7 +98,7 @@ namespace SWSniff.Core
                         //enable monitoring
                         _pipeOut.Write(RandomHelper.SerializeObj(new PipeMessageHeader(PipeCommand.EnableMonitor)), 0, Marshal.SizeOf(typeof(PipeMessageHeader)));
                         break;
-                    case PipeCommand.Data when h.DataSize > 0:
+                    case PipeCommand.Data when h.DataSize >= 3 && BitConverter.ToUInt16(bufferData, 0) == 2:
                         //Console.WriteLine($"{h.Function} ({h.Extra}): {string.Join("-", bufferData.Select(x => x.ToString("X2")))}");
                         switch (h.Function) {
                             case PipeFunction.FuncSend:
@@ -114,7 +120,9 @@ namespace SWSniff.Core
 
                     default:
                         Console.WriteLine($"Unhandled packet: cmd={h.Command}, fun={h.Function}, ext={h.Extra}, datalen={h.DataSize}");
-                        if (h.DataSize != 0)
+
+                        //if possible data packet, print contents
+                        if (h.DataSize >= 7 && BitConverter.ToUInt16(bufferData, 2) == h.DataSize)
                             Console.WriteLine(string.Join("-", bufferData.Select(x => x.ToString("X2"))));
                         break;
                 }
@@ -125,7 +133,8 @@ namespace SWSniff.Core
         {
             SWPacket p = SWPacket.Parse(data);
 
-            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {p.ID1:X2} {p.ID2:X2}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))} ({Encoding.ASCII.GetString(p.Data)})");
+            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {Enum.GetName(typeof(PacketType), (PacketType)p.ID) ?? p.ID.ToString("X4")}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))}");
+            //Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {(PacketType)p.ID}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))} ({Encoding.ASCII.GetString(p.Data)})");
         }
     }
 }

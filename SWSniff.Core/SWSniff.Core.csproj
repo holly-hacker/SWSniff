@@ -50,5 +50,8 @@
     <Compile Include="RandomHelper.cs" />
     <Compile Include="Sniffer.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Packets\SW\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
