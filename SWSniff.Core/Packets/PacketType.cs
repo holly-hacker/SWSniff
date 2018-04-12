@@ -37,6 +37,8 @@
         ClientMovementStop = 0x0503,    //guessed name
         ClientMovementJump = 0x0505,    //guessed name
 
+        ClientChatSend = 0x0701,        //guessed name
+
         ClientItemInvenInfo = 0x0801,
         ClientItemMove = 0x0802,        //guessed name
         ClientItemJoinStack = 0x0803,   //guessed name

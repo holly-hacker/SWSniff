@@ -49,6 +49,8 @@ namespace SWSniff.Core.Packets
                 case PacketType.ClientMovementStop: return new PacketMovementStop();
                 case PacketType.ClientMovementJump: return new PacketMovementJump();
 
+                case PacketType.ClientChatSend: return new PacketChatSend();
+
                 case PacketType.ClientItemMove: return new PacketItemMove();
                 case PacketType.ClientItemJoinStack: return new PacketItemJoinStack();
                 case PacketType.ClientItemSplitStack: return new PacketItemSplitStack();
@@ -60,7 +62,6 @@ namespace SWSniff.Core.Packets
 
                 default: return new GenericSWPacket();
             }
-
         }
 
         protected abstract void HandleData(byte[] data);

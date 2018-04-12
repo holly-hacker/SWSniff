@@ -42,11 +42,13 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Interop\PipeMessage.cs" />
     <Compile Include="Interop\PipeMessageHeader.cs" />
     <Compile Include="Interop\_Enums.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Packets\PacketType.cs" />
     <Compile Include="Packets\SWPacket.cs" />
+    <Compile Include="Packets\SW\PacketChatSend.cs" />
     <Compile Include="Packets\SW\PacketItemJoinStack.cs" />
     <Compile Include="Packets\SW\PacketItemMove.cs" />
     <Compile Include="Packets\SW\PacketItemMoveMoney.cs" />

@@ -3,7 +3,6 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using SWSniff.Core.Interop;
@@ -80,53 +79,42 @@ namespace SWSniff.Core
 
         private void PipeRead()
         {
-            byte[] bufferMsgHdr = new byte[14];
-            byte[] bufferData = new byte[0];
-            //read header
-            while (_pipeIn.Read(bufferMsgHdr, 0, 14) != 0) {
-                var h = (PipeMessageHeader)RandomHelper.DeSerializeObj(bufferMsgHdr, typeof(PipeMessageHeader));
-
-                //if there's data
-                if (h.DataSize != 0) {
-                    bufferData = new byte[h.DataSize];
-                    _pipeIn.Read(bufferData, 0, bufferData.Length);
-                }
+            while (PipeMessage.ReadFromPipe(_pipeIn, out PipeMessage p)) {
                 
-                switch (h.Command)
+                switch (p.Header.Command)
                 {
-                    case PipeCommand.Init when h.Function == PipeFunction.InitDecrypt:
-                        if (h.Extra == 0)
+                    case PipeCommand.Init when p.Header.Function == PipeFunction.InitDecrypt:
+                        if (p.Header.Extra == 0)
                             throw new Exception("Invalid license.");
 
                         //enable monitoring
-                        _pipeOut.Write(RandomHelper.SerializeObj(new PipeMessageHeader(PipeCommand.EnableMonitor)), 0, Marshal.SizeOf(typeof(PipeMessageHeader)));
+                        new PipeMessage(PipeCommand.EnableMonitor).Send(_pipeOut);
                         break;
-                    case PipeCommand.Data when h.DataSize >= 3 && BitConverter.ToUInt16(bufferData, 0) == 2:
-                        //Console.WriteLine($"{h.Function} ({h.Extra}): {string.Join("-", bufferData.Select(x => x.ToString("X2")))}");
-                        switch (h.Function) {
+                    case PipeCommand.Data when p.Header.DataSize >= 3 && BitConverter.ToUInt16(p.Data, 0) == 2:
+                        switch (p.Header.Function) {
                             case PipeFunction.FuncSend:
                             case PipeFunction.FuncSendTo:
                             case PipeFunction.FuncWsaSend:
                             case PipeFunction.FuncWsaSendTo:
                             case PipeFunction.FuncWsaSendDisconnect:
-                                HandlePacket(bufferData, true);
+                                HandlePacket(p.Data, true);
                                 break;
                             case PipeFunction.FuncRecv:
                             case PipeFunction.FuncRecvFrom:
                             case PipeFunction.FuncWsaRecv:
                             case PipeFunction.FuncWsaRecvFrom:
                             case PipeFunction.FuncWsaRecvDisconnect:
-                                HandlePacket(bufferData, false);
+                                HandlePacket(p.Data, false);
                                 break;
                         }
                         break;
 
                     default:
-                        Console.WriteLine($"Unhandled packet: cmd={h.Command}, fun={h.Function}, ext={h.Extra}, datalen={h.DataSize}");
+                        Console.WriteLine($"Unhandled packet: cmd={p.Header.Command}, fun={p.Header.Function}, ext={p.Header.Extra}, datalen={p.Header.DataSize}");
 
                         //if possible data packet, print contents
-                        if (h.DataSize >= 7 && BitConverter.ToUInt16(bufferData, 2) == h.DataSize)
-                            Console.WriteLine(string.Join("-", bufferData.Select(x => x.ToString("X2"))));
+                        if (p.Header.DataSize >= 7 && BitConverter.ToUInt16(p.Data, 2) == p.Header.DataSize)
+                            Console.WriteLine(string.Join("-", p.Data.Select(x => x.ToString("X2"))));
                         break;
                 }
             }
