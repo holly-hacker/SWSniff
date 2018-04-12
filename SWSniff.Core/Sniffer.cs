@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -18,6 +17,10 @@ namespace SWSniff.Core
         private NamedPipeClientStream _pipeOut;
         private NamedPipeServerStream _pipeIn;
         private Thread _pipeThread;
+
+        public event PacketEventDelegate PacketAction;
+
+        public delegate void PacketEventDelegate(object sender, SnifferEventArgs e);
 
         public Sniffer()
         {
@@ -129,12 +132,11 @@ namespace SWSniff.Core
             }
         }
 
-        private static void HandlePacket(byte[] data, bool outgoing)
+        private void HandlePacket(byte[] data, bool outgoing)
         {
             SWPacket p = SWPacket.Parse(data);
 
-            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {Enum.GetName(typeof(PacketType), (PacketType)p.ID) ?? p.ID.ToString("X4")}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))}");
-            //Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {(PacketType)p.ID}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))} ({Encoding.ASCII.GetString(p.Data)})");
+            PacketAction?.Invoke(this, new SnifferEventArgs(p, outgoing));
         }
     }
 }
