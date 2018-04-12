@@ -37,7 +37,7 @@ namespace SWSniff
         private static void PacketLogConsole(SWPacket p, bool outgoing)
         {
             if (p.ID == 0x0106 || p.PacketType() == PacketType.ClientCharacterUpdateSpecialOptionList) return;  //keepalive-ish stuff
-            if (p.ID == 0x0501 || p.ID == 0x0503) return;  //movement
+            //if (p.ID == 0x0501 || p.ID == 0x0503) return;  //movement
             Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {p}");
         }
 

@@ -5,8 +5,8 @@ namespace SWSniff.Core.Packets.SW
 {
     public class PacketItemMoveMoney : SWPacket
     {
-        private bool Depositing;
-        private long Amount;
+        public bool Depositing;
+        public long Amount;
 
         protected override void HandleData(byte[] data)
         {

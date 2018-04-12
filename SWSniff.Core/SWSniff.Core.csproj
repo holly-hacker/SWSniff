@@ -52,6 +52,9 @@
     <Compile Include="Packets\SW\PacketItemMoveMoney.cs" />
     <Compile Include="Packets\SW\PacketItemSort.cs" />
     <Compile Include="Packets\SW\PacketItemSplitStack.cs" />
+    <Compile Include="Packets\SW\PacketMovementJump.cs" />
+    <Compile Include="Packets\SW\PacketMovementMove.cs" />
+    <Compile Include="Packets\SW\PacketMovementStop.cs" />
     <Compile Include="Packets\SW\PacketShopBuyItem.cs" />
     <Compile Include="Packets\SW\PacketShopSellItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

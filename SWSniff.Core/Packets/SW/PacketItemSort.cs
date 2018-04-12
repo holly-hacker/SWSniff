@@ -4,7 +4,7 @@ namespace SWSniff.Core.Packets.SW
 {
     public class PacketItemSort : SWPacket
     {
-        private byte InvID;
+        public byte InvID;
 
         protected override void HandleData(byte[] data)
         {

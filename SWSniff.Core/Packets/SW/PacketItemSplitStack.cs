@@ -5,10 +5,10 @@ namespace SWSniff.Core.Packets.SW
 {
     public class PacketItemSplitStack : SWPacket
     {
-        private byte InvIDSrc, InvIDDst;
-        private int Unknown1;
-        private short InvPosSrc, InvPosDst;
-        private short Count;
+        public byte InvIDSrc, InvIDDst;
+        public int Unknown1;
+        public short InvPosSrc, InvPosDst;
+        public short Count;
 
         protected override void HandleData(byte[] data)
         {

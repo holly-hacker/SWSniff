@@ -33,6 +33,10 @@
 
         ClientMazeCreateReq = 0x0441,
 
+        ClientMovementMove = 0x0501,    //guessed name
+        ClientMovementStop = 0x0503,    //guessed name
+        ClientMovementJump = 0x0505,    //guessed name
+
         ClientItemInvenInfo = 0x0801,
         ClientItemMove = 0x0802,        //guessed name
         ClientItemJoinStack = 0x0803,   //guessed name

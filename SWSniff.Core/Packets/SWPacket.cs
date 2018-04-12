@@ -45,6 +45,10 @@ namespace SWSniff.Core.Packets
         private static SWPacket GetCorrectPacket(PacketType t)
         {
             switch (t) {
+                case PacketType.ClientMovementMove: return new PacketMovementMove();
+                case PacketType.ClientMovementStop: return new PacketMovementStop();
+                case PacketType.ClientMovementJump: return new PacketMovementJump();
+
                 case PacketType.ClientItemMove: return new PacketItemMove();
                 case PacketType.ClientItemJoinStack: return new PacketItemJoinStack();
                 case PacketType.ClientItemSplitStack: return new PacketItemSplitStack();
