@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using SWSniff.Core;
 using SWSniff.Core.Packets;
 
@@ -39,7 +38,7 @@ namespace SWSniff
         {
             if (p.ID == 0x0106 || p.PacketType() == PacketType.ClientCharacterUpdateSpecialOptionList) return;  //keepalive-ish stuff
             if (p.ID == 0x0501 || p.ID == 0x0503) return;  //movement
-            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {p.IDString()}: {string.Join("-", p.Data.Select(x => x.ToString("X2")))}");
+            Console.WriteLine($"{(outgoing ? "[OUT]" : "[IN] ")} {p}");
         }
 
         private static void PacketLogDisk(SWPacket p, bool outgoing)

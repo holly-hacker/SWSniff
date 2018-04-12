@@ -34,13 +34,19 @@
         ClientMazeCreateReq = 0x0441,
 
         ClientItemInvenInfo = 0x0801,
+        ClientItemMove = 0x0802,        //guessed name
+        ClientItemJoinStack = 0x0803,   //guessed name
+        ClientItemSplitStack = 0x0804,  //guessed name
         ClientItemMoveMoney = 0x0824,
+        ClientItemSort = 0x0825,        //guessed name
         ClientItemUpdateQuickslotItem = 0x0828,
         ClientItemUpdateCash = 0x0833,
         ClientItemMazeRewardItem = 0x0847,
         ClientItemAppearanceEquip = 0x0852,
         ClientItemNameChange = 0x0853,
 
+        ClientShopBuyItem = 0x0901,     //guessed name
+        ClientShopSellItem = 0x0902,    //guessed name
         ClientShopCashLoad = 0x0920,
         ClientShopCashBuy = 0x0921,
         ClientShopCashSet = 0x0923,

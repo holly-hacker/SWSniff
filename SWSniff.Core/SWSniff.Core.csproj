@@ -47,13 +47,17 @@
     <Compile Include="Native.cs" />
     <Compile Include="Packets\PacketType.cs" />
     <Compile Include="Packets\SWPacket.cs" />
+    <Compile Include="Packets\SW\PacketItemJoinStack.cs" />
+    <Compile Include="Packets\SW\PacketItemMove.cs" />
+    <Compile Include="Packets\SW\PacketItemMoveMoney.cs" />
+    <Compile Include="Packets\SW\PacketItemSort.cs" />
+    <Compile Include="Packets\SW\PacketItemSplitStack.cs" />
+    <Compile Include="Packets\SW\PacketShopBuyItem.cs" />
+    <Compile Include="Packets\SW\PacketShopSellItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomHelper.cs" />
     <Compile Include="Sniffer.cs" />
     <Compile Include="SnifferEventArgs.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Packets\SW\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
