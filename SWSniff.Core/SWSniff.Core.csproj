@@ -46,6 +46,7 @@
     <Compile Include="Interop\PipeMessageHeader.cs" />
     <Compile Include="Interop\_Enums.cs" />
     <Compile Include="Native.cs" />
+    <Compile Include="Packets\ICanSerialize.cs" />
     <Compile Include="Packets\PacketType.cs" />
     <Compile Include="Packets\SWPacket.cs" />
     <Compile Include="Packets\SW\PacketChatSend.cs" />
@@ -60,7 +61,7 @@
     <Compile Include="Packets\SW\PacketShopBuyItem.cs" />
     <Compile Include="Packets\SW\PacketShopSellItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomHelper.cs" />
+    <Compile Include="GeneralHelper.cs" />
     <Compile Include="Sniffer.cs" />
     <Compile Include="SnifferEventArgs.cs" />
   </ItemGroup>

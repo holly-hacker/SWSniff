@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace SWSniff.Core
 {
-    internal static class RandomHelper
+    internal static class GeneralHelper
     {
         public static ushort? GetProcessID() => (ushort?)Process.GetProcessesByName(Constants.ProcName).FirstOrDefault()?.Id;
 
@@ -32,6 +32,15 @@ namespace SWSniff.Core
             object obj = Marshal.PtrToStructure(ptr, t);
             handle.Free();
             return obj;
+        }
+
+        public static void XorPacket(byte[] arr)
+        {
+            const int arrOffset = 5;
+            byte xorOffset = arr[0];
+            //TODO: proper length
+            for (int i = 0; i < arr.Length - arrOffset; i++)
+                arr[i + arrOffset] ^= Constants.XorKey[xorOffset * 4 + i % 3];
         }
     }
 }

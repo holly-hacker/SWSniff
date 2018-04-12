@@ -6,7 +6,7 @@ namespace SWSniff.Core.Packets.SW
     {
         public byte InvID;
 
-        protected override void HandleData(byte[] data)
+        protected override void Deserialize(byte[] data)
         {
             Debug.Assert(ID == 0x0825);
 

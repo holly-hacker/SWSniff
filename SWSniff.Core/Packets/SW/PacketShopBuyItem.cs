@@ -9,7 +9,7 @@ namespace SWSniff.Core.Packets.SW
         public short Count;
         public byte Unknown1;   //0, flags perhaps?
 
-        protected override void HandleData(byte[] data)
+        protected override void Deserialize(byte[] data)
         {
             Debug.Assert(ID == 0x0901);
 

@@ -8,7 +8,7 @@ namespace SWSniff.Core.Packets.SW
         public int Unknown1, Unknown2, Unknown3, Unknown4, Unknown5;
         public float PosX, PosZ, PosY, Rotation, PosX2, PosZ2;
 
-        protected override void HandleData(byte[] data)
+        protected override void Deserialize(byte[] data)
         {
             Debug.Assert(ID == 0x0505);
 

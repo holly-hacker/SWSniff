@@ -17,7 +17,7 @@ namespace SWSniff.Core.Interop
                 Command = cmd,
                 Function = fun,
                 SocketId = sockid,
-                DataSize = data.Length,
+                DataSize = data?.Length ?? 0,
                 Extra = extra,
             };
 
@@ -36,7 +36,7 @@ namespace SWSniff.Core.Interop
             byte[] bufferMsgHdr = new byte[PipeMessageHeader.Size];
 
             if (pipe.Read(bufferMsgHdr, 0, PipeMessageHeader.Size) != 0) {
-                var hdr = (PipeMessageHeader)RandomHelper.DeSerializeObj(bufferMsgHdr, typeof(PipeMessageHeader));
+                var hdr = (PipeMessageHeader)GeneralHelper.DeSerializeObj(bufferMsgHdr, typeof(PipeMessageHeader));
 
                 //check for data
                 byte[] bufferData = null;
@@ -53,7 +53,7 @@ namespace SWSniff.Core.Interop
 
         public void Send(NamedPipeClientStream pipe)
         {
-            pipe.Write(RandomHelper.SerializeObj(Header), 0, PipeMessageHeader.Size);
+            pipe.Write(GeneralHelper.SerializeObj(Header), 0, PipeMessageHeader.Size);
 
             if (Data != null)
                 pipe.Write(Data, 0, Data.Length);

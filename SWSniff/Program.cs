@@ -2,6 +2,7 @@
 using System.IO;
 using SWSniff.Core;
 using SWSniff.Core.Packets;
+using SWSniff.Core.Packets.SW;
 
 namespace SWSniff
 {
@@ -9,6 +10,7 @@ namespace SWSniff
     {
         private static string DirLog;
         private static DateTime StartTime;
+        private static int LastSockId;
 
         private static void Main(string[] args)
         {
@@ -23,13 +25,19 @@ namespace SWSniff
             Console.WriteLine("Starting...");
             s.Start();
 
-            Console.WriteLine("Started, press enter to exit");
+            Console.WriteLine("Started, press enter to send a packet");
+            Console.ReadLine();
+            s.Inject(PacketType.ClientItemMoveMoney, new PacketItemMoveMoney(false, 123), LastSockId);
+
+            Console.WriteLine("Press enter to exit");
             Console.ReadLine();
         }
 
         private static void OnPacketAction(object sender, SnifferEventArgs e)
         {
-            var p = e.Packet;
+            SWPacket p = e.Packet;
+            LastSockId = e.SocketId;
+
             PacketLogConsole(p, e.Outgoing);
             PacketLogDisk(p, e.Outgoing);
         }

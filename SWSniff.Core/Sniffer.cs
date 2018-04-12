@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -29,14 +30,14 @@ namespace SWSniff.Core
 
         public void WaitForProcess(int sleepMs = 100)
         {
-            while (RandomHelper.GetProcessID() == null)
+            while (GeneralHelper.GetProcessID() == null)
                 Thread.Sleep(sleepMs);
         }
 
         public void Start()
         {
             //find process
-            int pid = RandomHelper.GetProcessID() ?? throw new Exception("proc not found");
+            int pid = GeneralHelper.GetProcessID() ?? throw new Exception("proc not found");
 
             //start pipes
             try {
@@ -77,6 +78,36 @@ namespace SWSniff.Core
             _pipeThread.Start();
         }
 
+        public void Inject(PacketType t, ICanSerialize p, int sockId)
+        {
+            //serialize the packet
+            byte[] dataPacket = p.Serialize();
+            short len = (short)(dataPacket.Length+7);
+
+            //get buffer to copy in the final byte array
+            byte[] buffer = new byte[len];
+
+            buffer[0] = 2;
+            buffer[1] = 0;
+            buffer[2] = (byte)(len >> 0);
+            buffer[3] = (byte)(len >> 8);
+            buffer[4] = 1;
+            buffer[5] = t.ID1();
+            buffer[6] = t.ID2();
+
+            //fill in the data
+            Array.Copy(dataPacket, 0, buffer, 7, dataPacket.Length);
+
+            GeneralHelper.XorPacket(buffer);
+
+            Inject(buffer, sockId);
+        }
+
+        public void Inject(byte[] data, int sockId)
+        {
+            new PipeMessage(PipeCommand.Inject, PipeFunction.FuncSend, sockId, data).Send(_pipeOut);
+        }
+
         private void PipeRead()
         {
             while (PipeMessage.ReadFromPipe(_pipeIn, out PipeMessage p)) {
@@ -97,34 +128,34 @@ namespace SWSniff.Core
                             case PipeFunction.FuncWsaSend:
                             case PipeFunction.FuncWsaSendTo:
                             case PipeFunction.FuncWsaSendDisconnect:
-                                HandlePacket(p.Data, true);
+                                HandlePacket(p, true);
                                 break;
                             case PipeFunction.FuncRecv:
                             case PipeFunction.FuncRecvFrom:
                             case PipeFunction.FuncWsaRecv:
                             case PipeFunction.FuncWsaRecvFrom:
                             case PipeFunction.FuncWsaRecvDisconnect:
-                                HandlePacket(p.Data, false);
+                                HandlePacket(p, false);
                                 break;
                         }
                         break;
 
                     default:
-                        Console.WriteLine($"Unhandled packet: cmd={p.Header.Command}, fun={p.Header.Function}, ext={p.Header.Extra}, datalen={p.Header.DataSize}");
+                        Debug.WriteLine($"Unhandled packet: cmd={p.Header.Command}, fun={p.Header.Function}, ext={p.Header.Extra}, datalen={p.Header.DataSize}");
 
                         //if possible data packet, print contents
                         if (p.Header.DataSize >= 7 && BitConverter.ToUInt16(p.Data, 2) == p.Header.DataSize)
-                            Console.WriteLine(string.Join("-", p.Data.Select(x => x.ToString("X2"))));
+                            Debug.WriteLine(string.Join("-", p.Data.Select(x => x.ToString("X2"))));
                         break;
                 }
             }
         }
 
-        private void HandlePacket(byte[] data, bool outgoing)
+        private void HandlePacket(PipeMessage msg, bool outgoing)
         {
-            SWPacket p = SWPacket.Parse(data);
+            SWPacket p = SWPacket.Parse(msg.Data);
 
-            PacketAction?.Invoke(this, new SnifferEventArgs(p, outgoing));
+            PacketAction?.Invoke(this, new SnifferEventArgs(p, outgoing, msg.Header.SocketId));
         }
     }
 }

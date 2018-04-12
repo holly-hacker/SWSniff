@@ -18,7 +18,7 @@ namespace SWSniff.Core.Packets
 #if DEBUG
             var beforeDecrypt = allData.Clone();
 #endif
-            DecryptArray(allData);
+            GeneralHelper.XorPacket(allData);
             using (var ms = new MemoryStream(allData))
             using (var br = new BinaryReader(ms)) {
                 br.ReadInt16();
@@ -27,16 +27,16 @@ namespace SWSniff.Core.Packets
                 var id1 = br.ReadByte();
                 var id2 = br.ReadByte();
                 byte[] packetData = br.ReadBytes(len - 7);
+
+                //TODO: if not at end of stream, continue reading the next packet
                 Debug.Assert(ms.Position == ms.Length, "Not at end of stream after reading packet");
 
-                SWPacket ret;
-                ret = GetCorrectPacket((PacketType)(id2 + (id1 << 8)));
-
+                SWPacket ret = GetCorrectPacket((PacketType)(id2 + (id1 << 8)));
                 ret.ID0 = id0;
                 ret.ID1 = id1;
                 ret.ID2 = id2;
                 ret.Data = packetData;
-                ret.HandleData(ret.Data);
+                ret.Deserialize(ret.Data);
                 return ret;
 
             }
@@ -64,25 +64,18 @@ namespace SWSniff.Core.Packets
             }
         }
 
-        protected abstract void HandleData(byte[] data);
+        protected abstract void Deserialize(byte[] data);
 
         public override string ToString()
         {
             string dataString = Data.Length == 0 ? string.Empty : ": " + string.Join("-", Data.Select(x => x.ToString("X2")));
             return $"{this.IDString()}{dataString}";
         }
-
-        private static void DecryptArray(byte[] arr)
-        {
-            const int arrOffset = 5;
-            byte xorOffset = arr[0];
-            for (int i = 0; i < arr.Length - arrOffset; i++)
-                arr[i + arrOffset] ^= Constants.XorKey[xorOffset*4 + i%3];
-        }
     }
     
-    public class GenericSWPacket : SWPacket
+    public class GenericSWPacket : SWPacket, ICanSerialize
     {
-        protected override void HandleData(byte[] data) { }
+        protected override void Deserialize(byte[] data) { }
+        public byte[] Serialize() => new byte[0];
     }
 }

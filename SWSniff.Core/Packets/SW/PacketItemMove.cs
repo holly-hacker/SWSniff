@@ -9,7 +9,7 @@ namespace SWSniff.Core.Packets.SW
         public int Unknown1, Unknown2;
         public short InvPosSrc, InvPosDst;
 
-        protected override void HandleData(byte[] data)
+        protected override void Deserialize(byte[] data)
         {
             Debug.Assert(ID == 0x0802);
 
