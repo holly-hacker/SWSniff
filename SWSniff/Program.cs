@@ -8,35 +8,36 @@ namespace SWSniff
 {
     internal static class Program
     {
-        private static string DirLog;
-        private static DateTime StartTime;
-        private static int LastSockId;
+        private static string _dirLog;
+        private static DateTime _startTime;
+        private static int _lastSockId;
+        private static Sniffer _s;
 
         private static void Main(string[] args)
         {
             Console.WriteLine("Init...");
-            Sniffer s = new Sniffer();
-            Directory.CreateDirectory(DirLog = $"Capture_{StartTime = DateTime.Now:yyyyMMdd_hhmmss}");
-            s.PacketAction += OnPacketAction;
+            _s = new Sniffer();
+            Directory.CreateDirectory(_dirLog = $"Capture_{_startTime = DateTime.Now:yyyyMMdd_hhmmss}");
+            _s.PacketAction += OnPacketAction;
 
             Console.WriteLine("Waiting for proc...");
-            s.WaitForProcess();
+            _s.WaitForProcess();
 
             Console.WriteLine("Starting...");
-            s.Start();
+            _s.Start();
 
             Console.WriteLine("Started, press enter to send a packet");
             Console.ReadLine();
-            s.Inject(PacketType.ClientItemMoveMoney, new PacketItemMoveMoney(false, 123), LastSockId);
+            _s.Inject(PacketType.ClientItemMoveMoney, new PacketItemMoveMoney(false, 123), _lastSockId);
 
             Console.WriteLine("Press enter to exit");
             Console.ReadLine();
         }
-
+        
         private static void OnPacketAction(object sender, SnifferEventArgs e)
         {
             SWPacket p = e.Packet;
-            LastSockId = e.SocketId;
+            _lastSockId = e.SocketId;
 
             PacketLogConsole(p, e.Outgoing);
             PacketLogDisk(p, e.Outgoing);
@@ -52,9 +53,9 @@ namespace SWSniff
         private static void PacketLogDisk(SWPacket p, bool outgoing)
         {
             if (p.ID == 0x0106 || p.PacketType() == PacketType.ClientCharacterUpdateSpecialOptionList) return;  //keepalive-ish stuff
-            if (p.ID == 0x0501 || p.ID == 0x0503) return;  //movement
-            string fileName = $"{(int)(DateTime.Now - StartTime).TotalMilliseconds:D7}ms_{(outgoing ? "Out" : "In_")}_{p.IDString()}_len{p.Data.Length}.bin";
-            File.WriteAllBytes(Path.Combine(DirLog, fileName), p.Data);
+            if ((p.ID & 0xFF00) == 0x0500) return;  //movement
+            string fileName = $"{(int)(DateTime.Now - _startTime).TotalMilliseconds:D7}ms_{(outgoing ? "Out" : "In_")}_{p.IDString()}_len{p.Data.Length}.bin";
+            File.WriteAllBytes(Path.Combine(_dirLog, fileName), p.Data);
         }
     }
 }
