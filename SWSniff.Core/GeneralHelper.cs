@@ -36,11 +36,11 @@ namespace SWSniff.Core
 
         public static void XorPacket(byte[] arr)
         {
-            const int arrOffset = 5;
-            byte xorOffset = arr[0];
-            //TODO: proper length
-            for (int i = 0; i < arr.Length - arrOffset; i++)
-                arr[i + arrOffset] ^= Constants.XorKey[xorOffset * 4 + i % 3];
+            const int xorStart = 5;
+            byte xorIndex = arr[0];
+            short len = BitConverter.ToInt16(arr, 2);   //only xor up to the expected length of the packet
+            for (int i = 0; i < len - xorStart; i++)
+                arr[i + xorStart] ^= Constants.XorKey[xorIndex * 4 + i % 3];
         }
     }
 }

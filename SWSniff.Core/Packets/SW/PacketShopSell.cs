@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace SWSniff.Core.Packets.SW
 {
-    public class PacketShopSellItem : SWPacket
+    public class PacketShopSell : SWPacket
     {
         public int VendorID;
         public short InvPos;

@@ -2,6 +2,7 @@
 {
     public enum PacketType : ushort
     {
+        BothSystemKeepAlive = 0x0105,
         ClientSystemTutorialStage = 0x0114,
         ClientTradePassword = 0x0118,
 
@@ -31,28 +32,37 @@
         ClientOtherCharacterInfo = 0x0375,
         ClientCharacterCommunity = 0x0377,
 
+        ClientWorldDistrictTransportReq = 0x0440,
         ClientMazeCreateReq = 0x0441,
 
         ClientMovementMove = 0x0501,    //guessed name
         ClientMovementStop = 0x0503,    //guessed name
         ClientMovementJump = 0x0505,    //guessed name
 
-        ClientChatSend = 0x0701,        //guessed name
+        ClientChatNormal = 0x0701,
+        ClientChatWhisper = 0x0702,
+        ClientChatTrade = 0x0703,
+        ClientChatMegaphone = 0x0706,
+        ClientChatGmCommand = 0x070A,
 
         ClientItemInvenInfo = 0x0801,
-        ClientItemMove = 0x0802,        //guessed name
-        ClientItemJoinStack = 0x0803,   //guessed name
-        ClientItemSplitStack = 0x0804,  //guessed name
+        ClientItemMove = 0x0802,
+        ClientItemCombine = 0x0803,
+        ClientItemDivide = 0x0804,
+        ClientItemAddSlot = 0x080F,
+        ClientItemBankInfo = 0x0810,
         ClientItemMoveMoney = 0x0824,
-        ClientItemSort = 0x0825,        //guessed name
+        ClientItemLineUp = 0x0825,
         ClientItemUpdateQuickslotItem = 0x0828,
         ClientItemUpdateCash = 0x0833,
         ClientItemMazeRewardItem = 0x0847,
         ClientItemAppearanceEquip = 0x0852,
         ClientItemNameChange = 0x0853,
 
-        ClientShopBuyItem = 0x0901,     //guessed name
-        ClientShopSellItem = 0x0902,    //guessed name
+        ClientShopBuy = 0x0901,
+        ClientShopSell = 0x0902,
+        ClientShopRepurchaserList = 0x0903,
+        ClientShopRepurchaser = 0x0904,
         ClientShopCashLoad = 0x0920,
         ClientShopCashBuy = 0x0921,
         ClientShopCashSet = 0x0923,
@@ -63,6 +73,7 @@
         ClientShopCashClose = 0x0933,
 
         ClientCompleteMazeReq = 0x1122,
+        ClientCompleteMazeAbandon = 0x1123,
         ClientCompleteMazeStartGame = 0x1125,
         ClientEventSpawnBox = 0x1131,
         ClientEventSceneDirecting = 0x1133,
@@ -75,6 +86,8 @@
         ClientMazeSwitchNpcClickReq = 0x117C,
         ClientMazeLuaFunctionReq = 0x117E,
 
+        ClientPartyKickOut = 0x1204,
+        ClientPartyLeave = 0x1205,
         ClientPartyMatchingEnter = 0x1230,
         ClientPartyMatchingExit = 0x1231,
         ClientPartyMatchingCheck = 0x1232,

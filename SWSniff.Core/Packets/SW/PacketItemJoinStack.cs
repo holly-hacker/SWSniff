@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace SWSniff.Core.Packets.SW
 {
-    public class PacketItemJoinStack : SWPacket
+    public class PacketItemJoinStack : SWPacket, ICanSerialize
     {
         public byte InvIDSrc, InvIDDst;
         public int Unknown1, Unknown2;
@@ -26,6 +27,21 @@ namespace SWSniff.Core.Packets.SW
             else Debug.Fail("Unexpected packet length");
         }
 
-        public override string ToString() => $"Added {Count} items to stack at pos {InvPosSrc}->{InvPosDst}, inv {InvIDSrc}->{InvIDDst}";
+        public byte[] Serialize()
+        {
+            using (var ms = new MemoryStream(16))
+            using (var bw = new BinaryWriter(ms)) {
+                bw.Write(InvIDSrc);
+                bw.Write(Unknown1);
+                bw.Write(InvPosSrc);
+                bw.Write(InvIDDst);
+                bw.Write(Unknown2);
+                bw.Write(InvPosDst);
+                bw.Write(Count);
+                return ms.ToArray();
+            }
+        }
+
+        public override string ToString() => $"Added {Count} items to stack at pos {InvPosSrc}->{InvPosDst}, inv {InvIDSrc}->{InvIDDst}, unk {Unknown1}->{Unknown2}";
     }
 }

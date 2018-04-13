@@ -45,20 +45,22 @@ namespace SWSniff.Core.Packets
         private static SWPacket GetCorrectPacket(PacketType t)
         {
             switch (t) {
+                case PacketType.BothSystemKeepAlive: return new PacketSystemKeepAlive();
+
                 case PacketType.ClientMovementMove: return new PacketMovementMove();
                 case PacketType.ClientMovementStop: return new PacketMovementStop();
                 case PacketType.ClientMovementJump: return new PacketMovementJump();
 
-                case PacketType.ClientChatSend: return new PacketChatSend();
+                case PacketType.ClientChatNormal: return new PacketChatSend();
 
                 case PacketType.ClientItemMove: return new PacketItemMove();
-                case PacketType.ClientItemJoinStack: return new PacketItemJoinStack();
-                case PacketType.ClientItemSplitStack: return new PacketItemSplitStack();
+                case PacketType.ClientItemCombine: return new PacketItemJoinStack();
+                case PacketType.ClientItemDivide: return new PacketItemSplitStack();
                 case PacketType.ClientItemMoveMoney: return new PacketItemMoveMoney();
-                case PacketType.ClientItemSort: return new PacketItemSort();
+                case PacketType.ClientItemLineUp: return new PacketItemSort();
 
-                case PacketType.ClientShopBuyItem:  return new PacketShopBuyItem();
-                case PacketType.ClientShopSellItem: return new PacketShopSellItem();
+                case PacketType.ClientShopBuy:  return new PacketShopBuy();
+                case PacketType.ClientShopSell: return new PacketShopSell();
 
                 default: return new GenericSWPacket();
             }
