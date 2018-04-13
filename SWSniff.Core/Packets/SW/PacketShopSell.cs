@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace SWSniff.Core.Packets.SW
 {
-    public class PacketShopSell : SWPacket
+    public class PacketShopSell : SWPacket, ICanSerialize
     {
         public int VendorID;
         public short InvPos;
@@ -23,6 +24,20 @@ namespace SWSniff.Core.Packets.SW
             else Debug.Fail("Unexpected packet length");
         }
 
-        public override string ToString() => $"Sold inventory pos {InvPos} to vendor {VendorID:X8}";
+        public byte[] Serialize()
+        {
+            using (var ms = new MemoryStream(9))
+            using (var bw = new BinaryWriter(ms)) {
+                bw.Write(VendorID);
+                bw.Write(Unknown0);
+                bw.Write(Unknown1);
+                bw.Write(Unknown2);
+                bw.Write(InvPos);
+
+                return ms.ToArray();
+            }
+        }
+
+        public override string ToString() => $"Sold inventory pos {InvPos} to vendor {VendorID:X8} ({Unknown0} {Unknown1} {Unknown2})";
     }
 }

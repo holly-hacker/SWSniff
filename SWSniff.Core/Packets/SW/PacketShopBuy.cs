@@ -1,13 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace SWSniff.Core.Packets.SW
 {
-    internal class PacketShopBuy : SWPacket
+    public class PacketShopBuy : SWPacket, ICanSerialize
     {
         public int VendorID, ItemID;
         public short Count;
         public byte Unknown1;   //0, flags perhaps?
+
+        public PacketShopBuy() { }
+
+        public PacketShopBuy(int vid, int item, short count, byte unk1)
+        {
+            VendorID = vid;
+            ItemID = item;
+            Count = count;
+            Unknown1 = unk1;
+        }
 
         protected override void Deserialize(byte[] data)
         {
@@ -21,6 +32,19 @@ namespace SWSniff.Core.Packets.SW
             } else Debug.Fail("Unexpected packet length");
         }
 
-        public override string ToString() => $"Bought item {ItemID:X} x{Count} from vendor {VendorID:X8}";
+        public byte[] Serialize()
+        {
+            using (var ms = new MemoryStream(11))
+            using (var bw = new BinaryWriter(ms)) {
+                bw.Write(VendorID);
+                bw.Write(ItemID);
+                bw.Write(Count);
+                bw.Write(Unknown1);
+
+                return ms.ToArray();
+            }
+        }
+
+        public override string ToString() => $"Bought item {ItemID:X} x{Count} from vendor {VendorID:X8} (idk={Unknown1})";
     }
 }

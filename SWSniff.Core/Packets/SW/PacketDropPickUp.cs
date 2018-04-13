@@ -8,6 +8,15 @@ namespace SWSniff.Core.Packets.SW
     {
         public int Unknown1, Unknown2, Unknown3;
 
+        public PacketDropPickUp() { }
+
+        public PacketDropPickUp(int v1, int v2, int v3)
+        {
+            Unknown1 = v1;
+            Unknown2 = v2;
+            Unknown3 = v3;
+        }
+
         protected override void Deserialize(byte[] data)
         {
             Debug.Assert(ID == 0x1402);

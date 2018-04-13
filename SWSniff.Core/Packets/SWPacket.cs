@@ -53,6 +53,8 @@ namespace SWSniff.Core.Packets
 
                 case PacketType.ClientChatNormal: return new PacketChatSend();
 
+                case PacketType.ClientDropPickUp: return new PacketDropPickUp();
+
                 case PacketType.ClientItemMove: return new PacketItemMove();
                 case PacketType.ClientItemCombine: return new PacketItemJoinStack();
                 case PacketType.ClientItemDivide: return new PacketItemSplitStack();

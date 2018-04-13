@@ -51,6 +51,7 @@
     <Compile Include="Packets\ICanSerialize.cs" />
     <Compile Include="Packets\PacketType.cs" />
     <Compile Include="Packets\SWPacket.cs" />
+    <Compile Include="Packets\SW\PacketChatGmCommand.cs" />
     <Compile Include="Packets\SW\PacketChatSend.cs" />
     <Compile Include="Packets\SW\PacketDropPickUp.cs" />
     <Compile Include="Packets\SW\PacketItemJoinStack.cs" />
