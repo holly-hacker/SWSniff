@@ -64,6 +64,9 @@ namespace SWSniff.Core.Packets
                 case PacketType.ClientShopBuy:  return new PacketShopBuy();
                 case PacketType.ClientShopSell: return new PacketShopSell();
 
+                case PacketType.ClientTradeUpdateItem: return new PacketTradeUpdateItem();
+                case PacketType.ClientTradeUpdateMoney: return new PacketTradeUpdateMoney();
+
                 default: return new GenericSWPacket();
             }
         }

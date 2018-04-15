@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace SWSniff.Core.Packets.SW
 {
-    public class PacketItemMove : SWPacket
+    public class PacketItemMove : SWPacket, ICanSerialize
     {
         public byte InvIDSrc, InvIDDst;
         public int Unknown1, Unknown2;
@@ -25,6 +26,20 @@ namespace SWSniff.Core.Packets.SW
             else Debug.Fail("Unexpected packet length");
         }
 
-        public override string ToString() => $"Moved items from pos {InvPosSrc}->{InvPosDst}, inv {InvIDSrc}->{InvIDDst}";
+        public byte[] Serialize()
+        {
+            using (var ms = new MemoryStream(14))
+            using (var bw = new BinaryWriter(ms)) {
+                bw.Write(InvIDSrc);
+                bw.Write(Unknown1);
+                bw.Write(InvPosSrc);
+                bw.Write(InvIDDst);
+                bw.Write(Unknown2);
+                bw.Write(InvPosDst);
+                return ms.ToArray();
+            }
+        }
+
+        public override string ToString() => $"Moved items from pos {InvPosSrc}->{InvPosDst}, inv {InvIDSrc}->{InvIDDst} (unk: {Unknown1} -> {Unknown2})";
     }
 }
