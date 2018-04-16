@@ -16,7 +16,7 @@ namespace SWSniff
         {
             Console.WriteLine("Init...");
             _s = new SWSniffer();
-            Directory.CreateDirectory(_dirLog = $"Capture_{_startTime = DateTime.Now:yyyyMMdd_hhmmss}");
+            _dirLog = $"Capture_{_startTime = DateTime.Now:yyyyMMdd_hhmmss}";
             _s.PacketAction += OnPacketAction;
 
             Console.WriteLine("Waiting for proc...");
@@ -53,6 +53,10 @@ namespace SWSniff
         {
             if (p.ID == 0x0106 || p.PacketType() == PacketType.ClientCharacterUpdateSpecialOptionList) return;  //keepalive-ish stuff
             if ((p.ID & 0xFF00) == 0x0500) return;  //movement
+
+            if (!Directory.Exists(_dirLog))
+                Directory.CreateDirectory(_dirLog);
+
             string fileName = $"{(int)(DateTime.Now - _startTime).TotalMilliseconds:D7}ms_{(outgoing ? "Out" : "In_")}_{p.IDString()}_len{p.Data.Length}.bin";
             File.WriteAllBytes(Path.Combine(_dirLog, fileName), p.Data);
         }
