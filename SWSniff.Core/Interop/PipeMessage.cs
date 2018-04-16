@@ -2,7 +2,7 @@
 
 namespace SWSniff.Core.Interop
 {
-    internal class PipeMessage
+    public class PipeMessage
     {
         public PipeMessageHeader Header;
         public readonly byte[] Data;

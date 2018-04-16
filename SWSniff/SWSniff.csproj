@@ -55,6 +55,10 @@
       <Project>{6b4c573f-a5fc-4ea8-891e-6529a1d48119}</Project>
       <Name>SWSniff.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SWSniff.SoulWorker\SWSniff.SoulWorker.csproj">
+      <Project>{1e5e43af-d1ab-4b97-ac0b-a2fe83d52356}</Project>
+      <Name>SWSniff.SoulWorker</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

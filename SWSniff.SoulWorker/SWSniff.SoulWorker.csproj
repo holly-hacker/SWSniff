@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6B4C573F-A5FC-4EA8-891E-6529A1D48119}</ProjectGuid>
+    <ProjectGuid>{1E5E43AF-D1AB-4B97-AC0B-A2FE83D52356}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SWSniff.Core</RootNamespace>
-    <AssemblyName>SWSniff.Core</AssemblyName>
+    <RootNamespace>SWSniff.SoulWorker</RootNamespace>
+    <AssemblyName>SWSniff.SoulWorker</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,14 +43,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Interop\PipeMessage.cs" />
-    <Compile Include="Interop\PipeMessageHeader.cs" />
-    <Compile Include="Interop\PipeEnums.cs" />
-    <Compile Include="Native.cs" />
-    <Compile Include="Interfaces\ICanSerialize.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="GeneralHelper.cs" />
-    <Compile Include="SnifferBase.cs" />
+    <Compile Include="PacketType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Packets\PacketChatGmCommand.cs" />
+    <Compile Include="Packets\PacketChatSend.cs" />
+    <Compile Include="Packets\PacketDropPickUp.cs" />
+    <Compile Include="Packets\PacketItemJoinStack.cs" />
+    <Compile Include="Packets\PacketItemMove.cs" />
+    <Compile Include="Packets\PacketItemMoveMoney.cs" />
+    <Compile Include="Packets\PacketItemSort.cs" />
+    <Compile Include="Packets\PacketItemSplitStack.cs" />
+    <Compile Include="Packets\PacketMovementJump.cs" />
+    <Compile Include="Packets\PacketMovementMove.cs" />
+    <Compile Include="Packets\PacketMovementStop.cs" />
+    <Compile Include="Packets\PacketShopBuy.cs" />
+    <Compile Include="Packets\PacketShopSell.cs" />
+    <Compile Include="Packets\PacketSystemKeepAlive.cs" />
+    <Compile Include="Packets\PacketTradeUpdateItem.cs" />
+    <Compile Include="Packets\PacketTradeUpdateMoney.cs" />
+    <Compile Include="SnifferEventArgs.cs" />
+    <Compile Include="Packets\SWPacket.cs" />
+    <Compile Include="SWSniffer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SWSniff.Core\SWSniff.Core.csproj">
+      <Project>{6b4c573f-a5fc-4ea8-891e-6529a1d48119}</Project>
+      <Name>SWSniff.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

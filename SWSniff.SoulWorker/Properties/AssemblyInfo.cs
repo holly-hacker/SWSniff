@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SWSniff.Core")]
+[assembly: AssemblyTitle("SWSniff.SoulWorker")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SWSniff.Core")]
+[assembly: AssemblyProduct("SWSniff.SoulWorker")]
 [assembly: AssemblyCopyright("Copyright © HoLLy 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6b4c573f-a5fc-4ea8-891e-6529a1d48119")]
+[assembly: Guid("1e5e43af-d1ab-4b97-ac0b-a2fe83d52356")]
 
 // Version information for an assembly consists of the following four values:
 //

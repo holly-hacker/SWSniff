@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using SWSniff.Core.Packets.SW;
+using SWSniff.Core.Interfaces;
 
-namespace SWSniff.Core.Packets
+namespace SWSniff.SoulWorker.Packets
 {
     public abstract class SWPacket
     {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using SWSniff.Core;
-using SWSniff.Core.Packets;
-using SWSniff.Core.Packets.SW;
+using SWSniff.SoulWorker;
+using SWSniff.SoulWorker.Packets;
 
 namespace SWSniff
 {
@@ -11,12 +10,12 @@ namespace SWSniff
         private static string _dirLog;
         private static DateTime _startTime;
         private static int _lastSockId;
-        private static Sniffer _s;
+        private static SWSniffer _s;
 
         private static void Main(string[] args)
         {
             Console.WriteLine("Init...");
-            _s = new Sniffer();
+            _s = new SWSniffer();
             Directory.CreateDirectory(_dirLog = $"Capture_{_startTime = DateTime.Now:yyyyMMdd_hhmmss}");
             _s.PacketAction += OnPacketAction;
 

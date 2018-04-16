@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSniff", "SWSniff\SWSniff.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSniff.Core", "SWSniff.Core\SWSniff.Core.csproj", "{6B4C573F-A5FC-4EA8-891E-6529A1D48119}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWSniff.SoulWorker", "SWSniff.SoulWorker\SWSniff.SoulWorker.csproj", "{1E5E43AF-D1AB-4B97-AC0B-A2FE83D52356}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6B4C573F-A5FC-4EA8-891E-6529A1D48119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B4C573F-A5FC-4EA8-891E-6529A1D48119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B4C573F-A5FC-4EA8-891E-6529A1D48119}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E5E43AF-D1AB-4B97-AC0B-A2FE83D52356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E5E43AF-D1AB-4B97-AC0B-A2FE83D52356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E5E43AF-D1AB-4B97-AC0B-A2FE83D52356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E5E43AF-D1AB-4B97-AC0B-A2FE83D52356}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

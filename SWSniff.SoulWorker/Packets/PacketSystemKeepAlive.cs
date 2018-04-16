@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace SWSniff.Core.Packets.SW
+namespace SWSniff.SoulWorker.Packets
 {
     public class PacketSystemKeepAlive : SWPacket
     {

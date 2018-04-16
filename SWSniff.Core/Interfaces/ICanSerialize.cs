@@ -1,4 +1,4 @@
-﻿namespace SWSniff.Core.Packets
+﻿namespace SWSniff.Core.Interfaces
 {
     public interface ICanSerialize
     {

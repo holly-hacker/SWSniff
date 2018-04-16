@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using SWSniff.Core.Interfaces;
 
-namespace SWSniff.Core.Packets.SW
+namespace SWSniff.SoulWorker.Packets
 {
     public class PacketItemMoveMoney : SWPacket, ICanSerialize
     {

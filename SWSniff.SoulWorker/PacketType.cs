@@ -1,4 +1,4 @@
-﻿namespace SWSniff.Core.Packets
+﻿namespace SWSniff.SoulWorker
 {
     public enum PacketType : ushort
     {

@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using SWSniff.Core.Interfaces;
 
-namespace SWSniff.Core.Packets.SW
+namespace SWSniff.SoulWorker.Packets
 {
     public class PacketChatSend : SWPacket, ICanSerialize
     {

@@ -7,37 +7,35 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using SWSniff.Core.Interop;
-using SWSniff.Core.Packets;
 
 namespace SWSniff.Core
 {
-    public class Sniffer
+    public abstract class SnifferBase
     {
         private static readonly Encoding EncA = Encoding.GetEncoding(0x6FAF);
         private NamedPipeClientStream _pipeOut;
         private NamedPipeServerStream _pipeIn;
         private Thread _pipeThread;
+        private readonly string _procName;
 
-        public event PacketEventDelegate PacketAction;
-
-        public delegate void PacketEventDelegate(object sender, SnifferEventArgs e);
-
-        public Sniffer()
+        protected SnifferBase(string procName)
         {
+            _procName = procName;
+
             if (!File.Exists(Constants.FilenameWspe))
                 new WebClient().DownloadFile(Constants.UrlWspe, Constants.FilenameWspe);
         }
 
         public void WaitForProcess(int sleepMs = 100)
         {
-            while (GeneralHelper.GetProcessID() == null)
+            while (GeneralHelper.GetProcessID(_procName) == null)
                 Thread.Sleep(sleepMs);
         }
 
         public void Start()
         {
             //find process
-            int pid = GeneralHelper.GetProcessID() ?? throw new Exception("proc not found");
+            int pid = GeneralHelper.GetProcessID(_procName) ?? throw new Exception("proc not found");
 
             //start pipes
             try {
@@ -76,36 +74,6 @@ namespace SWSniff.Core
             //start reading from pipe
             _pipeThread = new Thread(PipeRead) {IsBackground = true};
             _pipeThread.Start();
-        }
-
-        public void Inject(PacketType t, ICanSerialize p, int sockId)
-        {
-            //serialize the packet
-            byte[] dataPacket = p.Serialize();
-            Inject(t, dataPacket, sockId);
-        }
-
-        public void Inject(PacketType t, byte[] dataPacket, int sockId)
-        {
-            short len = (short)(dataPacket.Length+7);
-
-            //get buffer to copy in the final byte array
-            byte[] buffer = new byte[len];
-
-            buffer[0] = 2;
-            buffer[1] = 0;
-            buffer[2] = (byte)(len >> 0);
-            buffer[3] = (byte)(len >> 8);
-            buffer[4] = 1;
-            buffer[5] = t.ID1();
-            buffer[6] = t.ID2();
-
-            //fill in the data
-            Array.Copy(dataPacket, 0, buffer, 7, dataPacket.Length);
-
-            GeneralHelper.XorPacket(buffer);
-
-            Inject(buffer, sockId);
         }
 
         public void Inject(byte[] data, int sockId)
@@ -157,26 +125,6 @@ namespace SWSniff.Core
         }
 
         /// <summary> Reads all packets from the message and invokes the event handlers. </summary>
-        private void HandlePacket(PipeMessage msg, bool outgoing)
-        {
-            Debug.Assert(msg.HasData);
-            var data = msg.Data;
-            
-            int packetStart = 0;
-            while (packetStart < data.Length) {
-                //read cleartext packet header
-                Debug.Assert(BitConverter.ToInt16(data, packetStart + 0) == 0x0002, "Unknown xor offset");
-                short packetLen = BitConverter.ToInt16(data, packetStart + 2);
-
-                //extract packet and parse it
-                byte[] slice = new byte[packetLen]; //TODO: C# 7 slicing
-                Array.Copy(data, packetStart, slice, 0, packetLen);
-                SWPacket p = SWPacket.Parse(slice);
-                PacketAction?.Invoke(this, new SnifferEventArgs(p, outgoing, msg.Header.SocketId));
-
-                //update packet start
-                packetStart += packetLen;
-            }
-        }
+        protected abstract void HandlePacket(PipeMessage msg, bool outgoing);
     }
 }

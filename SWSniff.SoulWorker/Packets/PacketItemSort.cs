@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace SWSniff.Core.Packets.SW
+namespace SWSniff.SoulWorker.Packets
 {
     public class PacketItemSort : SWPacket
     {

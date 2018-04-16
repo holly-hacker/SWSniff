@@ -7,7 +7,7 @@ namespace SWSniff.Core
 {
     internal static class GeneralHelper
     {
-        public static ushort? GetProcessID() => (ushort?)Process.GetProcessesByName(Constants.ProcName).FirstOrDefault()?.Id;
+        public static ushort? GetProcessID(string name) => (ushort?)Process.GetProcessesByName(name).FirstOrDefault()?.Id;
 
         public static byte[] SerializeObj(object obj)
         {
@@ -32,15 +32,6 @@ namespace SWSniff.Core
             object obj = Marshal.PtrToStructure(ptr, t);
             handle.Free();
             return obj;
-        }
-
-        public static void XorPacket(byte[] arr)
-        {
-            const int xorStart = 5;
-            byte xorIndex = arr[0];
-            short len = BitConverter.ToInt16(arr, 2);   //only xor up to the expected length of the packet
-            for (int i = 0; i < len - xorStart; i++)
-                arr[i + xorStart] ^= Constants.XorKey[xorIndex * 4 + i % 3];
         }
     }
 }

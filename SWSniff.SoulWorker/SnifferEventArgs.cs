@@ -1,7 +1,7 @@
 ﻿using System;
-using SWSniff.Core.Packets;
+using SWSniff.SoulWorker.Packets;
 
-namespace SWSniff.Core
+namespace SWSniff.SoulWorker
 {
     public class SnifferEventArgs : EventArgs
     {
