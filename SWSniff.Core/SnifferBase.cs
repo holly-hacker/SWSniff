@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading;
 using SWSniff.Core.Interop;
@@ -21,9 +20,6 @@ namespace SWSniff.Core
         protected SnifferBase(string procName)
         {
             _procName = procName;
-
-            if (!File.Exists(Constants.FilenameWspe))
-                new WebClient().DownloadFile(Constants.UrlWspe, Constants.FilenameWspe);
         }
 
         public void WaitForProcess(int sleepMs = 100)
@@ -51,7 +47,7 @@ namespace SWSniff.Core
                 throw new Exception("Cannot open process.");
 
             //write LoadLibraryA parameter to other process
-            byte[] filenameBytes = EncA.GetBytes(Path.Combine(Directory.GetCurrentDirectory(), Constants.FilenameWspe));
+            byte[] filenameBytes = EncA.GetBytes(Path.Combine(Directory.GetCurrentDirectory(), Constants.FilenameBootstrap));
             IntPtr ptrMem = Native.VirtualAllocEx(hProc, (IntPtr)0, (uint)filenameBytes.Length, Native.AllocationType.COMMIT, Native.MemoryProtection.EXECUTE_READ);
             if (ptrMem == IntPtr.Zero)
                 throw new Exception("Cannot allocate process memory.");
@@ -66,11 +62,6 @@ namespace SWSniff.Core
             _pipeIn.WaitForConnection();
             _pipeOut.Connect();
             
-            //register
-            _pipeOut.Write(BitConverter.GetBytes(Constants.RegName.Length), 0, 1);
-            _pipeOut.Write(EncA.GetBytes(Constants.RegName), 0, Constants.RegName.Length);
-            _pipeOut.Write(EncA.GetBytes(Constants.RegKey), 0, Constants.RegKey.Length);
-
             //start reading from pipe
             _pipeThread = new Thread(PipeRead) {IsBackground = true};
             _pipeThread.Start();
