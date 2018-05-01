@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace SWSniff.Internal.Hooking
 {
-    internal static unsafe class AITHook
+    internal static unsafe class IATHook
     {
         public static bool Apply(IntPtr modHandle, string name, IntPtr delegatePtr)
         {

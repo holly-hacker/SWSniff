@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hooking\AITHook.cs" />
+    <Compile Include="Hooking\IATHook.cs" />
     <Compile Include="Hooking\HookWrapper.cs" />
     <Compile Include="InjectStart.cs" />
     <Compile Include="Native.cs" />

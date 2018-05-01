@@ -25,8 +25,8 @@ namespace SWSniff.Internal.Hooking
             // Get delegate ptr
             var ptr = Marshal.GetFunctionPointerForDelegate(d);
 
-            Console.WriteLine("Applying AIT Hook");
-            AITHook.Apply(_hProc, _function, ptr);
+            Console.WriteLine("Applying IAT Hook");
+            IATHook.Apply(_hProc, _function, ptr);
         }
     }
 }
