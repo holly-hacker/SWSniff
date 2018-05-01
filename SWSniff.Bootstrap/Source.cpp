@@ -6,21 +6,22 @@
 
 void inject(const std::wstring& path)
 {
-	// Build the runtime
 	auto* meta_host = static_cast<ICLRMetaHost*>(nullptr);
-	CLRCreateInstance(CLSID_CLRMetaHost, IID_PPV_ARGS(&meta_host));
-
 	auto* runtime_info = static_cast<ICLRRuntimeInfo*>(nullptr);
-	meta_host->GetRuntime(L"v4.0.30319", IID_PPV_ARGS(&runtime_info));
-
 	auto* clr_runtime_host = static_cast<ICLRRuntimeHost*>(nullptr);
+
+	// Build the runtime
+	CLRCreateInstance(CLSID_CLRMetaHost, IID_PPV_ARGS(&meta_host));
+	meta_host->GetRuntime(L"v4.0.30319", IID_PPV_ARGS(&runtime_info));
 	runtime_info->GetInterface(CLSID_CLRRuntimeHost, IID_PPV_ARGS(&clr_runtime_host));
 
 	// Start the runtime
 	clr_runtime_host->Start();
 
 	// Execute managed assembly
-	auto return_value = static_cast<DWORD>(0);
+	DWORD return_value;
+	DWORD appdomain;
+	clr_runtime_host->GetCurrentAppDomainId(&appdomain);
 	clr_runtime_host->ExecuteInDefaultAppDomain(
 		path.c_str(),
 		L"SWSniff.Internal.InjectStart",
@@ -28,12 +29,14 @@ void inject(const std::wstring& path)
 		L"",
 		&return_value);
 
-	clr_runtime_host->Stop();
+	// Unload the current appdomain
+	clr_runtime_host->UnloadAppDomain(appdomain, true);
 
 	// Release runtime objects
-	meta_host->Release();
-	runtime_info->Release();
+	clr_runtime_host->Stop();
 	clr_runtime_host->Release();
+	runtime_info->Release();
+	meta_host->Release();
 }
 
 void on_attach(HINSTANCE instance)

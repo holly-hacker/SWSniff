@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows.Forms;
+using SWSniff.Internal.Hooking;
 
 namespace SWSniff.Internal
 {
@@ -8,7 +8,7 @@ namespace SWSniff.Internal
         [STAThread]
         public static int Main(string s)
         {
-            MessageBox.Show("Hello from managed code!");
+            var hook = new Hook("Ws2_32.dll", "recv");
 
             return 0;
         }
