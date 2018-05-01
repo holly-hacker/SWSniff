@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace SWSniff.Internal.Hooking
 {
-    internal static unsafe class AITWinAPI
+    internal static unsafe class AITHook
     {
-        public static bool PleaseSendHelp(IntPtr modHandle, string name, IntPtr delegatePtr)
+        public static bool Apply(IntPtr modHandle, string name, IntPtr delegatePtr)
         {
             int x = 0;
             const ushort IMAGE_DIRECTORY_ENTRY_IMPORT = 0x1;
@@ -36,6 +36,7 @@ namespace SWSniff.Internal.Hooking
                         // Reset memory permissions
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, old, out _);
 
+                        Console.WriteLine("Finished AIT hook");
                         return true;
                     }
 

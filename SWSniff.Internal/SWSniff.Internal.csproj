@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hooking\AITWinAPI.cs" />
-    <Compile Include="Hooking\Hook.cs" />
+    <Compile Include="Hooking\AITHook.cs" />
+    <Compile Include="Hooking\HookWrapper.cs" />
     <Compile Include="InjectStart.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
