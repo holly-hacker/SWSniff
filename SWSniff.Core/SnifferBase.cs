@@ -20,6 +20,12 @@ namespace SWSniff.Core
         protected SnifferBase(string procName)
         {
             _procName = procName;
+
+            // Check for required DLL's
+            if (!File.Exists(Constants.FilenameBootstrapDLL))
+                throw new Exception("Bootstrap DLL not found, make sure it is built.");
+            if (!File.Exists(Constants.FilenameInternalDLL))
+                throw new Exception("Internal DLL not found");
         }
 
         public void WaitForProcess(int sleepMs = 100)
@@ -47,7 +53,7 @@ namespace SWSniff.Core
                 throw new Exception("Cannot open process.");
 
             //write LoadLibraryA parameter to other process
-            byte[] filenameBytes = EncA.GetBytes(Path.Combine(Directory.GetCurrentDirectory(), Constants.FilenameBootstrap));
+            byte[] filenameBytes = EncA.GetBytes(Path.Combine(Directory.GetCurrentDirectory(), Constants.FilenameBootstrapDLL));
             IntPtr ptrMem = Native.VirtualAllocEx(hProc, (IntPtr)0, (uint)filenameBytes.Length, Native.AllocationType.COMMIT, Native.MemoryProtection.EXECUTE_READ);
             if (ptrMem == IntPtr.Zero)
                 throw new Exception("Cannot allocate process memory.");
