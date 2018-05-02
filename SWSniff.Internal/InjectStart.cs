@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Threading;
 using SWSniff.Internal.Hooking;
 
 namespace SWSniff.Internal
@@ -16,7 +15,6 @@ namespace SWSniff.Internal
 
         private static HookWrapper<WSASendDelegate> _wsaSendHook;
 
-        [STAThread]
         public static int Main(string s)
         {
             AllocConsole();
@@ -27,11 +25,7 @@ namespace SWSniff.Internal
             Console.WriteLine("Applying hook");
             _wsaSendHook.Apply(WSASendTarget);
 
-            Console.WriteLine("Reached endless loop");
-            while (true) {
-                Thread.Sleep(1000);
-            }
-
+            Console.WriteLine("Reached end of main");
             return 0;
         }
 
