@@ -24,10 +24,8 @@ namespace SWSniff.Internal.Hooking
                     string s = Marshal.PtrToStringAnsi(new IntPtr((byte*)modHandle + oThunk + 0x2));
 
                     if (s == name) {
-                        uint origFunc = fThunk;
-
                         // Make memory writable
-                        byte* funcAddr = (byte*)modHandle + deref.FirstThunk;
+                        byte* funcAddr = (byte*)fThunk;
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, Native.MemoryProtection.EXECUTE_READWRITE, out var old);
 
                         // Write delegate pointer
@@ -36,7 +34,8 @@ namespace SWSniff.Internal.Hooking
                         // Reset memory permissions
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, old, out _);
 
-                        Console.WriteLine("Finished AIT hook");
+                        // Log some values to the console for debugging purposes
+                        Console.WriteLine($"IAT hooked function '{s}', changed address {(uint)funcAddr:X8} to {*(uint*)funcAddr:X8} (at thunk base offset {(uint)deref.FirstThunk:X8})");
                         return true;
                     }
 
