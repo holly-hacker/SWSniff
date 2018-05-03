@@ -29,6 +29,10 @@ void inject(const std::wstring& path)
 		L"",
 		&return_value);
 
+#if DEBUG
+	MessageBox(nullptr, "Managed code executed, unloading the CLR.", "Unloading", 0);
+#endif
+
 	// Unload the current appdomain
 	clr_runtime_host->UnloadAppDomain(appdomain, true);
 

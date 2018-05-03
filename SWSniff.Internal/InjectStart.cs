@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Threading;
 using SWSniff.Internal.Hooking;
 
 namespace SWSniff.Internal
@@ -25,8 +26,9 @@ namespace SWSniff.Internal
             Console.WriteLine("Applying hook");
             _wsaSendHook.Apply(WSASendTarget);
 
-            Console.WriteLine("Reached end of main");
-            return 0;
+            Console.WriteLine("Reached end of main, will enter loop to prevent unloading");
+            while (true)
+                Thread.Sleep(1000);
         }
 
         public static int WSASendTarget(IntPtr socket, IntPtr buffers, int bufferCount, out IntPtr numberOfBytesSent, SocketFlags flags, IntPtr overlapped, IntPtr completionRoutine)

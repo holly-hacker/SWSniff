@@ -5,7 +5,7 @@ namespace SWSniff.Internal.Hooking
 {
     internal class HookWrapper<TDelegate>
     {
-        public TDelegate OriginalFunction => Marshal.GetDelegateForFunctionPointer<TDelegate>(_hOrig);
+        public TDelegate OriginalFunction { get; }
 
         private readonly IntPtr _hProc;
         private readonly IntPtr _hOrig;
@@ -18,6 +18,9 @@ namespace SWSniff.Internal.Hooking
             // Find the handle to the original function and store it
             _hProc = Native.GetModuleHandle(null);
             _hOrig = Native.GetProcAddress(Native.GetModuleHandle(module), function);
+
+            // Store the original function in a delegate
+            OriginalFunction = Marshal.GetDelegateForFunctionPointer<TDelegate>(_hOrig);
         }
 
         public void Apply(TDelegate d)
