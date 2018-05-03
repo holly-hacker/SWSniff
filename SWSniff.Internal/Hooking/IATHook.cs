@@ -24,8 +24,8 @@ namespace SWSniff.Internal.Hooking
                     string s = Marshal.PtrToStringAnsi(new IntPtr((byte*)modHandle + oThunk + 0x2));
 
                     if (s == name) {
-                        // Make memory writable
-                        byte* funcAddr = (byte*)fThunk;
+                        // Make memory writable (funcAddr is a pointer to the function pointer)
+                        byte* funcAddr = (byte*)((uint*)((byte*)modHandle + deref.FirstThunk) + j);
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, Native.MemoryProtection.EXECUTE_READWRITE, out var old);
 
                         // Write delegate pointer
@@ -35,7 +35,7 @@ namespace SWSniff.Internal.Hooking
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, old, out _);
 
                         // Log some values to the console for debugging purposes
-                        Console.WriteLine($"IAT hooked function '{s}', changed address {(uint)funcAddr:X8} to {*(uint*)funcAddr:X8} (at thunk base offset {(uint)deref.FirstThunk:X8})");
+                        Console.WriteLine($"IAT hooked function '{s}', changed pointer from 0x{fThunk:X8} to 0x{*(uint*)funcAddr:X8}");
                         return true;
                     }
 
