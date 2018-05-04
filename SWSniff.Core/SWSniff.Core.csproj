@@ -43,9 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Interop\PipeMessage.cs" />
-    <Compile Include="Interop\PipeMessageHeader.cs" />
-    <Compile Include="Interop\PipeEnums.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Interfaces\ICanSerialize.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

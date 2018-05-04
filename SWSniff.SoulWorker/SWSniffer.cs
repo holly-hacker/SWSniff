@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using SWSniff.Core;
 using SWSniff.Core.Interfaces;
-using SWSniff.Core.Interop;
 using SWSniff.SoulWorker.Packets;
 
 namespace SWSniff.SoulWorker
@@ -45,27 +44,29 @@ namespace SWSniff.SoulWorker
         }
 
         /// <summary> Reads all packets from the message and invokes the event handlers. </summary>
-        protected override void HandlePacket(PipeMessage msg, bool outgoing)
+        protected override void HandlePacket(object msg, bool outgoing)
         {
-            Debug.Assert(msg.HasData);
-            var data = msg.Data;
+            throw new NotImplementedException();
 
-            int packetStart = 0;
-            while (packetStart < data.Length)
-            {
-                //read cleartext packet header
-                Debug.Assert(BitConverter.ToInt16(data, packetStart + 0) == 0x0002, "Unknown xor offset");
-                short packetLen = BitConverter.ToInt16(data, packetStart + 2);
+            //Debug.Assert(msg.HasData);
+            //var data = msg.Data;
 
-                //extract packet and parse it
-                byte[] slice = new byte[packetLen]; //TODO: C# 7 slicing
-                Array.Copy(data, packetStart, slice, 0, packetLen);
-                SWPacket p = SWPacket.Parse(slice);
-                PacketAction?.Invoke(this, new SnifferEventArgs(p, outgoing, msg.Header.SocketId));
+            //int packetStart = 0;
+            //while (packetStart < data.Length)
+            //{
+            //    //read cleartext packet header
+            //    Debug.Assert(BitConverter.ToInt16(data, packetStart + 0) == 0x0002, "Unknown xor offset");
+            //    short packetLen = BitConverter.ToInt16(data, packetStart + 2);
 
-                //update packet start
-                packetStart += packetLen;
-            }
+            //    //extract packet and parse it
+            //    byte[] slice = new byte[packetLen]; //TODO: C# 7 slicing
+            //    Array.Copy(data, packetStart, slice, 0, packetLen);
+            //    SWPacket p = SWPacket.Parse(slice);
+            //    PacketAction?.Invoke(this, new SnifferEventArgs(p, outgoing, msg.Header.SocketId));
+
+            //    //update packet start
+            //    packetStart += packetLen;
+            //}
         }
     }
 }
