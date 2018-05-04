@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using SWSniff.Internal.Hooking;
+using SWSniff.Internal.Interop;
 
 namespace SWSniff.Internal
 {
@@ -16,6 +17,7 @@ namespace SWSniff.Internal
         private delegate int WSARecvDelegate(IntPtr socket, IntPtr buffers, int bufferCount, out IntPtr numberOfBytesRecvd, SocketFlags flags, IntPtr overlapped, IntPtr completionRoutine);
         private delegate int WSASendDelegate(IntPtr socket, IntPtr buffers, int bufferCount, out IntPtr numberOfBytesSent, SocketFlags flags, IntPtr overlapped, IntPtr completionRoutine);
 
+        private static PacketHandler _packetHandler;
         private static HookWrapper<SendDelegate> _sendHook;
         private static HookWrapper<RecvDelegate> _recvHook;
         private static HookWrapper<WSASendDelegate> _wsaSendHook;
@@ -23,7 +25,11 @@ namespace SWSniff.Internal
 
         public static int Main(string s)
         {
+#if DEBUG
             AllocConsole();
+#endif
+            Console.WriteLine("Initializing");
+            _packetHandler = new PacketHandler();
 
             Console.WriteLine("Creating hook");
             _recvHook = new HookWrapper<RecvDelegate>("Ws2_32.dll", "recv");
@@ -44,33 +50,25 @@ namespace SWSniff.Internal
 
         private static int SendTarget(IntPtr socket, IntPtr buf, int len, int flags)
         {
-            // Log stuff here
-            Console.WriteLine($"send on socket {socket.ToInt32():X}: 0x{buf.ToInt32():X8}");
-
+            _packetHandler.HandleSend(socket, buf, len, HookedFunction.Send);
             return _sendHook.OriginalFunction(socket, buf, len, flags);
         }
 
         private static int RecvTarget(IntPtr socket, IntPtr buf, int len, int flags)
         {
-            // Log stuff here
-            Console.WriteLine($"recv on socket {socket.ToInt32():X}: 0x{buf.ToInt32():X8}");
-
+            _packetHandler.HandleRecv(socket, buf, len, HookedFunction.Recv);
             return _recvHook.OriginalFunction(socket, buf, len, flags);
         }
 
         public static int WSASendTarget(IntPtr socket, IntPtr buffers, int bufferCount, out IntPtr numberOfBytesSent, SocketFlags flags, IntPtr overlapped, IntPtr completionRoutine)
         {
-            // Log stuff here
-            Console.WriteLine($"WSASend on socket {socket.ToInt32():X}: 0x{buffers.ToInt32():X8}");
-
+            _packetHandler.HandleSend(socket, buffers, bufferCount, HookedFunction.WSASend);
             return _wsaSendHook.OriginalFunction(socket, buffers, bufferCount, out numberOfBytesSent, flags, overlapped, completionRoutine);
         }
 
         private static int WSARecvTarget(IntPtr socket, IntPtr buffers, int bufferCount, out IntPtr numberOfBytesRecvd, SocketFlags flags, IntPtr overlapped, IntPtr completionRoutine)
         {
-            // Log stuff here
-            Console.WriteLine($"WSARecv on socket {socket.ToInt32():X}: 0x{buffers.ToInt32():X8}");
-
+            _packetHandler.HandleRecv(socket, buffers, bufferCount, HookedFunction.WSARecv);
             return _wsaRecvHook.OriginalFunction(socket, buffers, bufferCount, out numberOfBytesRecvd, flags, overlapped, completionRoutine);
         }
     }
