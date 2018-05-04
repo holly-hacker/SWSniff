@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace SWSniff.Internal.Hooking
 {
     internal static unsafe class IATHook
     {
-        public static bool Apply(IntPtr modHandle, string name, IntPtr delegatePtr)
+        public static bool Apply(IntPtr modHandle, string name, IntPtr delegatePtr) => Apply(modHandle, name, 0, delegatePtr, false);
+        public static bool Apply(IntPtr modHandle, string name, int oid, IntPtr delegatePtr, bool ordinal = true)
         {
             int x = 0;
             const ushort IMAGE_DIRECTORY_ENTRY_IMPORT = 0x1;
@@ -15,15 +15,38 @@ namespace SWSniff.Internal.Hooking
             do {
                 deref = *imports;
 
+                // We can get the name of this module
+                string modName = Marshal.PtrToStringAnsi(new IntPtr((byte*)modHandle + deref.Name));
+
                 uint j = 0;
 
                 uint oThunk = *(uint*)((byte*)modHandle + deref.OriginalFirstThunk);
                 uint fThunk = *(uint*)((byte*)modHandle + deref.FirstThunk);
 
                 while (oThunk != 0) {
-                    string s = Marshal.PtrToStringAnsi(new IntPtr((byte*)modHandle + oThunk + 0x2));
+                    bool match = false;
 
-                    if (s == name) {
+                    // Get the pointer to the function name
+                    byte* nModFuncName = (byte*)modHandle + oThunk + 0x2;
+
+                    if (ordinal && ((int)nModFuncName & 0x80000000) != 0) {
+                        // If the top bit is set, there is no name                        
+                        //Console.WriteLine($"{modName}: {(int)fThunk:X8} - function {oThunk & ~0x80000000}");
+
+                        // So instead, check if the ordinal ID matches ours.
+                        if ((oThunk & ~0x80000000) == oid)
+                            match = true;
+                    }
+                    else if (!ordinal) {
+                        // If the top bit isn't set, check this name against the desired one
+                        string s = Marshal.PtrToStringAnsi(new IntPtr(nModFuncName));
+                        //Console.WriteLine($"{modName}: {(int)fThunk:X8}/{(int)((byte*)modHandle + oThunk):X8} - {s}");
+
+                        if (s == name)
+                            match = true;
+                    }
+
+                    if (match) {
                         // Make memory writable (funcAddr is a pointer to the function pointer)
                         byte* funcAddr = (byte*)((uint*)((byte*)modHandle + deref.FirstThunk) + j);
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, Native.MemoryProtection.EXECUTE_READWRITE, out var old);
@@ -35,7 +58,7 @@ namespace SWSniff.Internal.Hooking
                         Native.VirtualProtect(new IntPtr((int)funcAddr), 4, old, out _);
 
                         // Log some values to the console for debugging purposes
-                        Console.WriteLine($"IAT hooked function '{s}', changed pointer from 0x{fThunk:X8} to 0x{*(uint*)funcAddr:X8}");
+                        Console.WriteLine($"IAT hooked function '{name}', changed pointer from 0x{fThunk:X8} to 0x{*(uint*)funcAddr:X8}");
                         return true;
                     }
 

@@ -32,8 +32,8 @@ namespace SWSniff.Internal
             _packetHandler = new PacketHandler();
 
             Console.WriteLine("Creating hook");
-            _recvHook = new HookWrapper<RecvDelegate>("Ws2_32.dll", "recv");
-            _sendHook = new HookWrapper<SendDelegate>("Ws2_32.dll", "send");
+            _recvHook = new HookWrapper<RecvDelegate>("Ws2_32.dll", "recv", 16);
+            _sendHook = new HookWrapper<SendDelegate>("Ws2_32.dll", "send", 19);
             _wsaSendHook = new HookWrapper<WSASendDelegate>("Ws2_32.dll", "WSASend");
             _wsaRecvHook = new HookWrapper<WSARecvDelegate>("Ws2_32.dll", "WSARecv");
 
