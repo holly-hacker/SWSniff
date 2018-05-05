@@ -9,7 +9,7 @@ namespace SWSniff
     {
         private static string _dirLog;
         private static DateTime _startTime;
-        private static int _lastSockId;
+        private static uint _lastSockId;
         private static SWSniffer _s;
 
         private static void Main(string[] args)

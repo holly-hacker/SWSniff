@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Text;
 using System.Threading;
+using SWSniff.Internal;
+using SWSniff.Internal.Interop;
 
 namespace SWSniff.Core
 {
@@ -9,10 +12,13 @@ namespace SWSniff.Core
     {
         private static readonly Encoding EncA = Encoding.GetEncoding(0x6FAF);
         private readonly string _procName;
+        private readonly NamedPipeServerStream _server;
+        private Thread _pipeThread;
 
         protected SnifferBase(string procName)
         {
             _procName = procName;
+            _server = new NamedPipeServerStream(Internal.Constants.PipeNameIn);
 
             // Check for required DLL's
             if (!File.Exists(Constants.FilenameBootstrapDLL))
@@ -31,10 +37,7 @@ namespace SWSniff.Core
         {
             // Find process
             int pid = GeneralHelper.GetProcessID(_procName) ?? throw new Exception("proc not found");
-
-            // Start pipes
-            // TODO
-
+            
             // Open process
             IntPtr hProc = Native.OpenProcess(Native.ProcessAccessFlags.All, false, pid);
             if (hProc == IntPtr.Zero)
@@ -53,17 +56,39 @@ namespace SWSniff.Core
             Native.CreateRemoteThread(hProc, IntPtr.Zero, 0, ptrLoadLib, ptrMem, 0, IntPtr.Zero);
 
             // Wait for injected lib to ping back
-            // TODO
-            
+            _server.WaitForConnection();
+
             // Start reading from pipe
-            // TODO
+            _pipeThread = new Thread(PipeRead);
+            _pipeThread.Start();
         }
 
-        public void Inject(byte[] data, int sockId)
+        public void Inject(byte[] data, uint sockId)
         {
             throw new NotImplementedException();
         }
 
-        protected abstract void HandlePacket(object msg, bool outgoing);
+        private void PipeRead()
+        {
+            while (PacketHeader.ReadFromPipe(_server, out PacketHeader pkg)) {
+                byte[] data = null;
+
+                if (pkg.Length > 0) {
+                    data = new byte[(int)pkg.Length];
+                    _server.Read(data, 0, (int)pkg.Length);
+                }
+
+                switch (pkg.Command) {
+                    case PacketCommand.ReadonlyPacketInfo:
+                        HandlePacket(pkg.SocketId, data, pkg.Function.HasFlag(PacketFunction.Send));
+                        break;
+                    default:
+                    case PacketCommand.None:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        protected abstract void HandlePacket(uint socketId, byte[] msg, bool outgoing);
     }
 }
