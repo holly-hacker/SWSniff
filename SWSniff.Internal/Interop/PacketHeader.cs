@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace SWSniff.Internal.Interop
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PacketHeader
     {
         public const int PacketLength = sizeof(PacketCommand) + sizeof(PacketFunction) + sizeof(uint) + sizeof(uint);
