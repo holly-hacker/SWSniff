@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SWSniff.Internal.Interop
 {
-    internal class PacketHandler
+    internal unsafe class PacketHandler
     {
         private readonly PipeManager _pipeMan;
 
@@ -14,63 +14,53 @@ namespace SWSniff.Internal.Interop
             _pipeMan = pipeMan;
         }
 
-        public void HandleSend(IntPtr socket, IntPtr buf, int len, SocketFlags flags)
+        public void HandleSend(IntPtr socket, byte* buf, int len, SocketFlags flags)
         {
             const PacketFunction fn = PacketFunction.Send;
             DebugLog(buf, len, flags, fn);
             _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer(buf, len));
         }
 
-        public void HandleRecv(IntPtr socket, IntPtr buf, int len, SocketFlags flags)
+        public void HandleRecv(IntPtr socket, byte* buf, int len, SocketFlags flags)
         {
             const PacketFunction fn = PacketFunction.Recv;
             DebugLog(buf, len, flags, fn);
             _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer(buf, len));
         }
 
-        public unsafe void HandleWSASend(IntPtr socket, IntPtr wsaBuf, int bufferCount, SocketFlags flags)
+        public void HandleWSASend(IntPtr socket, WSABuffer* wsaBuf, int bufferCount, SocketFlags flags)
         {
             const PacketFunction fn = PacketFunction.WSASend;
             for (int i = 0; i < bufferCount; i++) {
-                var bufPtr = (WSABuffer*)wsaBuf + i;
-                DebugLog((*bufPtr).Data, (*bufPtr).Length, flags, fn);
-                _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer((*bufPtr).Data, (*bufPtr).Length));
+                DebugLog(wsaBuf[i].Data, wsaBuf[i].Length, flags, fn);
+                _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer(wsaBuf[i].Data, wsaBuf[i].Length));
             }
         }
 
-        public unsafe void HandleWSARecv(IntPtr socket, IntPtr wsaBuf, int bufferCount, SocketFlags flags)
+        public void HandleWSARecv(IntPtr socket, WSABuffer* wsaBuf, int bufferCount, SocketFlags flags)
         {
             const PacketFunction fn = PacketFunction.WSARecv;
             for (int i = 0; i < bufferCount; i++) {
-                var bufPtr = (WSABuffer*)wsaBuf + i;
-                DebugLog((*bufPtr).Data, (*bufPtr).Length, flags, fn);
-                _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer((*bufPtr).Data, (*bufPtr).Length));
+                DebugLog(wsaBuf[i].Data, wsaBuf[i].Length, flags, fn);
+                _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer(wsaBuf[i].Data, wsaBuf[i].Length));
             }
         }
 
-        private struct WSABuffer
+        private static byte[] ReadMemoryBuffer(byte* buf, int len)
         {
-            public int Length;
-            public IntPtr Data;
-        }
-
-        private static unsafe byte[] ReadMemoryBuffer(IntPtr buf, int len)
-        {
-            byte[] buffer = new byte[len];
-            byte* ptr = (byte*)buf.ToPointer();
+            byte[] ret = new byte[len];
             for (int i = 0; i < len; i++)
-                buffer[i] = *ptr++;
-            return buffer;
+                ret[i] = buf[i];
+            return ret;
         }
 
         [Conditional("DEBUG")]
-        private static unsafe void DebugLog(IntPtr buf, int len, SocketFlags flags, PacketFunction fn)
+        private static void DebugLog(byte* buf, int len, SocketFlags flags, PacketFunction fn)
         {
             var sb = new StringBuilder();
-            byte* ptr = (byte*)buf.ToPointer();
 
             for (int i = 0; i < len; i++)
-                sb.AppendFormat("{0:X2}-", *ptr++);
+                sb.AppendFormat("{0:X2}-", buf[i]);
 
             string s = sb.ToString().TrimEnd('-');
             if (s.Length >= 0x200)
