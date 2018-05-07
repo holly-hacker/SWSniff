@@ -14,16 +14,44 @@ namespace SWSniff.Internal.Interop
             _pipeMan = pipeMan;
         }
 
-        public void HandleSend(IntPtr socket, IntPtr buf, int len, SocketFlags flags, PacketFunction fn)
+        public void HandleSend(IntPtr socket, IntPtr buf, int len, SocketFlags flags)
         {
+            const PacketFunction fn = PacketFunction.Send;
             DebugLog(buf, len, flags, fn);
             _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer(buf, len));
         }
 
-        public void HandleRecv(IntPtr socket, IntPtr buf, int len, SocketFlags flags, PacketFunction fn)
+        public void HandleRecv(IntPtr socket, IntPtr buf, int len, SocketFlags flags)
         {
+            const PacketFunction fn = PacketFunction.Recv;
             DebugLog(buf, len, flags, fn);
             _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer(buf, len));
+        }
+
+        public unsafe void HandleWSASend(IntPtr socket, IntPtr wsaBuf, int bufferCount, SocketFlags flags)
+        {
+            const PacketFunction fn = PacketFunction.WSASend;
+            for (int i = 0; i < bufferCount; i++) {
+                var bufPtr = (WSABuffer*)wsaBuf + i;
+                DebugLog((*bufPtr).Data, (*bufPtr).Length, flags, fn);
+                _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer((*bufPtr).Data, (*bufPtr).Length));
+            }
+        }
+
+        public unsafe void HandleWSARecv(IntPtr socket, IntPtr wsaBuf, int bufferCount, SocketFlags flags)
+        {
+            const PacketFunction fn = PacketFunction.WSARecv;
+            for (int i = 0; i < bufferCount; i++) {
+                var bufPtr = (WSABuffer*)wsaBuf + i;
+                DebugLog((*bufPtr).Data, (*bufPtr).Length, flags, fn);
+                _pipeMan.SendPacketDetected(fn, socket, ReadMemoryBuffer((*bufPtr).Data, (*bufPtr).Length));
+            }
+        }
+
+        private struct WSABuffer
+        {
+            public int Length;
+            public IntPtr Data;
         }
 
         private static unsafe byte[] ReadMemoryBuffer(IntPtr buf, int len)
