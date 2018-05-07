@@ -9,15 +9,12 @@ namespace SWSniff.Internal.Hooking
         public static bool Apply(IntPtr modHandle, string name, int oid, IntPtr delegatePtr, bool ordinal = true)
         {
             int x = 0;
-            const ushort IMAGE_DIRECTORY_ENTRY_IMPORT = 0x1;
-            var imports = (ImageImportDescriptor*)Native.ImageDirectoryEntryToDataEx(modHandle, true, IMAGE_DIRECTORY_ENTRY_IMPORT, ref x, IntPtr.Zero);
+            const ushort imageDirectoryEntryImport = 0x1;
+            var imports = (ImageImportDescriptor*)Native.ImageDirectoryEntryToDataEx(modHandle, true, imageDirectoryEntryImport, ref x, IntPtr.Zero);
             ImageImportDescriptor deref;
             do {
                 deref = *imports;
-
-                // We can get the name of this module
-                string modName = Marshal.PtrToStringAnsi(new IntPtr((byte*)modHandle + deref.Name));
-
+                
                 uint j = 0;
 
                 uint oThunk = *(uint*)((byte*)modHandle + deref.OriginalFirstThunk);
